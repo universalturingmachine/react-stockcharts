@@ -73,9 +73,9 @@ SmiSeries.defaultProps = {
 		dLine: "#EA2BFF",
 		kLine: "#74D400",
 	},
-	overSold: 80,
-	middle: 50,
-	overBought: 20,
+	overSold: 40,
+	middle: 0,
+	overBought: -40,
 	refLineOpacity: 0.3,
 };
 

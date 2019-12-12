@@ -6,20 +6,26 @@ export default function(getClose, values, i, windowSize, misc) {
 	const totalValues = values.length;
 	let output;
 
-	console.log("i = ", i, " windowSize = ", windowSize, " totalValues = ", totalValues);
-	console.log("prevValue = ", misc.prevValue);
+	if (misc.print && i < 100) {
+		// console.log("i = ", i, " windowSize = ", windowSize, " totalValues = ", totalValues);
+		// console.log("prevValue = ", misc.prevValue);
+		// console.log("values = ", JSON.stringify(values));
+	}
 
 	if (i < windowSize) {
 		const size = getMin(totalValues, windowSize);
 		output = sum(values, getClose) / size;
 	} else {
 		const prevValue = misc.prevValue;
-		const currClose = getClose(last(values));
-		console.log("currClose = ", currClose);
+		const lastValue = last(values);
+		const currClose = getClose(lastValue);
+		if (misc.print && i < 100) {
+			// console.log("prevValue = ", prevValue, " lastValue = ", lastValue, " currClose = ", currClose);
+		}
 		output = alpha * currClose + (1 - alpha) * prevValue;
 	}
 	misc.prevValue = output;
-	console.log("output = ", output);
+	// if (misc.print && i < 100) console.log("output = ", output);
 	return output;
 }
 

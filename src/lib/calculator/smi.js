@@ -39,7 +39,7 @@ export default function() {
 	let source = d => ({ open: d.open, high: d.high, low: d.low, close: d.close });
 
 	function calculator(data) {
-		const { windowSize } = options;
+		const { emaWindowSize, kWindowSize, dWindowSize } = options;
 
 		const high = d => source(d).high,
 			low = d => source(d).low,
@@ -48,42 +48,37 @@ export default function() {
 		const getValue = d => d;
 
 		const cmParam = slidingWindow()
-			.windowSize(windowSize)
-			.accumulator(values => {
+			.windowSize(kWindowSize)
+			.accumulator((values, i) => {
 
 				const highestHigh = max(values, high);
 				const lowestLow = min(values, low);
 
 				const currentClose = close(last(values));
 				const k = currentClose -  (highestHigh + lowestLow) / 2;
-				console.log("k = ", k);
 
 				return k;
 			});
 
 		const emaCmParam = slidingWindow()
-			.windowSize(windowSize)
-			.misc({ "prevValue": 0 })
+			.windowSize(emaWindowSize)
+			.misc({ "prevValue": 0, "print": true })
 			.accumulator((values, i, accumulatorIdx, misc) => {
-				const ema = myEma(close, values, i, windowSize, misc);
-				console.log("ema = ", ema);
+				const ema = myEma(getValue, values, i, emaWindowSize, misc);
 				return ema;
 			});
 
 		const ema2CmParam = slidingWindow()
-			.windowSize(windowSize)
+			.windowSize(emaWindowSize)
 			.misc({ "prevValue": 0 })
 			.accumulator((values, i, accumulatorIdx, misc) => {
-				return myEma(close, values, i, windowSize, misc);
+				return myEma(getValue, values, i, emaWindowSize, misc);
 			});
 
-		// const index = 100;
-
 		const ema2CmValue = ema2CmParam(emaCmParam(cmParam(data)));
-		console.log("10 ", JSON.stringify(ema2CmValue));
 
 		const hlParam = slidingWindow()
-			.windowSize(windowSize)
+			.windowSize(kWindowSize)
 			.accumulator(values => {
 
 				const highestHigh = max(values, high);
@@ -95,21 +90,20 @@ export default function() {
 			});
 
 		const emaHlParam = slidingWindow()
-			.windowSize(windowSize)
+			.windowSize(emaWindowSize)
 			.misc({ "prevValue": 0 })
 			.accumulator((values, i, accumulatorIdx, misc) => {
-				return myEma(close, values, i, windowSize, misc);
+				return myEma(getValue, values, i, emaWindowSize, misc);
 			});
 
 		const ema2HlParam = slidingWindow()
-			.windowSize(windowSize)
+			.windowSize(emaWindowSize)
 			.misc({ "prevValue": 0 })
 			.accumulator((values, i, accumulatorIdx, misc) => {
-				return myEma(close, values, i, windowSize, misc);
+				return myEma(getValue, values, i, emaWindowSize, misc);
 			});
 
 		const ema2HlValue = ema2HlParam(emaHlParam(hlParam(data)));
-		console.log("20 ", JSON.stringify(ema2HlValue));
 
 		const cmHlZipper = zipper()
 			.combine((cm, hl) => ({ cm, hl }));
@@ -117,16 +111,14 @@ export default function() {
 		const smiValue = cmHlPair.map(function(cmHlPair) {
 			return 100 * cmHlPair.cm / cmHlPair.hl;
 		});
-		console.log("30 ", JSON.stringify(smiValue));
 
 		const emaSmiSignal = slidingWindow()
-			.windowSize(windowSize)
+			.windowSize(dWindowSize)
 			.misc({ "prevValue": 0 })
 			.accumulator((values, i, accumulatorIdx, misc) => {
-				return myEma(getValue, values, i, windowSize, misc);
+				return myEma(getValue, values, i, dWindowSize, misc);
 			});
 		const smiSignal = emaSmiSignal(smiValue);
-		console.log("40 ", JSON.stringify(smiSignal));
 
 		const smiAlgorithm = zipper()
 			.combine((K, D) => ({ K, D }));
@@ -135,8 +127,8 @@ export default function() {
 		return indicatorData;
 	}
 	calculator.undefinedLength = function() {
-		const { windowSize, kWindowSize, dWindowSize } = options;
-		return windowSize + kWindowSize + dWindowSize;
+		const { emaWindowSize, kWindowSize, dWindowSize } = options;
+		return emaWindowSize + kWindowSize + dWindowSize;
 	};
 	calculator.source = function(x) {
 		if (!arguments.length) {
