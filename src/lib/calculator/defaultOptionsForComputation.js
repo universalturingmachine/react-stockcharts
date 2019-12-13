@@ -61,6 +61,16 @@ export const FullStochasticOscillator = {
 	dWindowSize: 3,
 };
 
+export const SmiOscillator = {
+	emaWindowSize: 3,
+	kWindowSize: 14,
+	dWindowSize: 14,
+};
+
+export const ChoppinessOscillator = {
+	windowSize: 14,
+};
+
 export const RSI = {
 	windowSize: 14,
 	// source: d => d.close, // "high", "low", "open", "close"

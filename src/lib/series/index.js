@@ -19,6 +19,7 @@ export { default as BollingerSeries } from "./BollingerSeries";
 export { default as RSISeries } from "./RSISeries";
 export { default as StochasticSeries } from "./StochasticSeries";
 export { default as SmiSeries } from "./SmiSeries";
+export { default as ChoppinessSeries } from "./ChoppinessSeries";
 export { default as ElderRaySeries } from "./ElderRaySeries";
 export { default as VolumeProfileSeries } from "./VolumeProfileSeries";
 export { default as StraightLine } from "./StraightLine";

@@ -29,7 +29,7 @@ THE SOFTWARE.
 import { max, min } from "d3-array";
 
 import { last, slidingWindow, zipper } from "../utils";
-import { FullStochasticOscillator as defaultOptions } from "./defaultOptionsForComputation";
+import { SmiOscillator as defaultOptions } from "./defaultOptionsForComputation";
 import myEma from "../indicator/myEma";
 
 export default function() {
@@ -49,7 +49,7 @@ export default function() {
 
 		const cmParam = slidingWindow()
 			.windowSize(kWindowSize)
-			.accumulator((values, i) => {
+			.accumulator((values) => {
 
 				const highestHigh = max(values, high);
 				const lowestLow = min(values, low);

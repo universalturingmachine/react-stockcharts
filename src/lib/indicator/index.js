@@ -13,6 +13,7 @@ export { default as rsi } from "./rsi";
 export { default as atr } from "./atr";
 export { default as stochasticOscillator } from "./stochasticOscillator";
 export { default as smiOscillator } from "./smiOscillator";
+export { default as choppinessOscillator } from "./choppinessOscillator";
 export { default as forceIndex } from "./forceIndex";
 export { default as sar } from "./sar";
 export { default as elderRay } from "./elderRay";

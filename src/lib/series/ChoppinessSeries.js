@@ -6,37 +6,28 @@ import PropTypes from "prop-types";
 import LineSeries from "./LineSeries";
 import StraightLine from "./StraightLine";
 
-class SmiSeries extends Component {
+class ChoppinessSeries extends Component {
 	constructor(props) {
 		super(props);
-		this.yAccessorForD = this.yAccessorForD.bind(this);
-		this.yAccessorForK = this.yAccessorForK.bind(this);
+		this.yAccessor = this.yAccessor.bind(this);
 	}
-	yAccessorForD(d) {
+	yAccessor(d) {
 		const { yAccessor } = this.props;
-		return yAccessor(d) && yAccessor(d).D;
-	}
-	yAccessorForK(d) {
-		const { yAccessor } = this.props;
-		return yAccessor(d) && yAccessor(d).K;
+		return yAccessor(d);
 	}
 	render() {
 		const { className, stroke, refLineOpacity } = this.props;
-		const { overSold, middle, overBought } = this.props;
+		const { choppy, middle, trending } = this.props;
 		return (
 			<g className={className}>
-				<LineSeries yAccessor={this.yAccessorForD}
-					stroke={stroke.dLine}
-					fill="none"
-					strokeWidth = {2} />
-				<LineSeries yAccessor={this.yAccessorForK}
+				<LineSeries yAccessor={this.yAccessor}
 					stroke={stroke.kLine}
 					fill="none"
 					strokeWidth = {2} />
 				<StraightLine
 					stroke={stroke.top}
 					opacity={refLineOpacity}
-					yValue={overSold} />
+					yValue={choppy} />
 				<StraightLine
 					stroke={stroke.middle}
 					opacity={refLineOpacity}
@@ -44,43 +35,39 @@ class SmiSeries extends Component {
 				<StraightLine
 					stroke={stroke.bottom}
 					opacity={refLineOpacity}
-					yValue={overBought} />
+					yValue={trending} />
 			</g>
 		);
 	}
 }
 
-SmiSeries.propTypes = {
+ChoppinessSeries.propTypes = {
 	className: PropTypes.string,
 	yAccessor: PropTypes.func.isRequired,
 	stroke: PropTypes.shape({
 		top: PropTypes.string.isRequired,
 		middle: PropTypes.string.isRequired,
 		bottom: PropTypes.string.isRequired,
-		dLine: PropTypes.string.isRequired,
 		kLine: PropTypes.string.isRequired,
 	}).isRequired,
-	overSold: PropTypes.number.isRequired,
+	choppy: PropTypes.number.isRequired,
 	middle: PropTypes.number.isRequired,
-	overBought: PropTypes.number.isRequired,
+	trending: PropTypes.number.isRequired,
 	refLineOpacity: PropTypes.number.isRequired,
 };
 
-SmiSeries.defaultProps = {
-	className: "react-stockcharts-smi-series",
+ChoppinessSeries.defaultProps = {
+	className: "react-stockcharts-choppiness-series",
 	stroke: {
 		top: "#964B00",
 		middle: "#000000",
 		bottom: "#964B00",
-		// dLine: "#EA2BFF",
-		dLine: "#FF0000",
-		// kLine: "#74D400",
 		kLine: "#000000",
 	},
-	overSold: 40,
-	middle: 0,
-	overBought: -40,
+	choppy: 61.8,
+	middle: 50,
+	trending: 38.2,
 	refLineOpacity: 0.3,
 };
 
-export default SmiSeries;
+export default ChoppinessSeries;

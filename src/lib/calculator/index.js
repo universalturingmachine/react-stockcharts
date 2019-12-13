@@ -11,6 +11,7 @@ export { default as macd } from "./macd";
 export { default as rsi } from "./rsi";
 export { default as sto } from "./sto";
 export { default as smi } from "./smi";
+export { default as choppiness } from "./choppiness";
 export { default as atr } from "./atr";
 export { default as forceIndex } from "./forceIndex";
 export { default as smoothedForceIndex } from "./smoothedForceIndex";
