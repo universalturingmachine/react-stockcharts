@@ -30,12 +30,14 @@ import { max, min, mean } from "d3-array";
 
 import { last, slidingWindow, zipper } from "../utils";
 import { FullStochasticOscillator as defaultOptions } from "./defaultOptionsForComputation";
+import myEma from "../indicator/myEma";
 
 export default function() {
 
 	let options = defaultOptions;
 
 	let source = d => ({ open: d.open, high: d.high, low: d.low, close: d.close });
+	const getValue = d => d;
 
 	function calculator(data) {
 		const { windowSize, kWindowSize, dWindowSize } = options;
@@ -45,7 +47,7 @@ export default function() {
 			close = d => source(d).close;
 
 		const kWindow = slidingWindow()
-			.windowSize(windowSize)
+			.windowSize(kWindowSize)
 			.accumulator(values => {
 
 				const highestHigh = max(values, high);
@@ -58,12 +60,16 @@ export default function() {
 			});
 
 		const kSmoothed = slidingWindow()
-			.skipInitial(windowSize - 1)
-			.windowSize(kWindowSize)
-			.accumulator(values => mean(values));
+			// .skipInitial(windowSize - 1)
+			.windowSize(windowSize)
+			.misc({ "prevValue": 0, "print": true })
+			.accumulator((values, i, accumulatorIdx, misc) => {
+				const ema = myEma(getValue, values, i, windowSize, misc);
+				return ema;
+			});
 
 		const dWindow = slidingWindow()
-			.skipInitial(windowSize - 1 + kWindowSize - 1)
+			// .skipInitial(windowSize - 1 + kWindowSize - 1)
 			.windowSize(dWindowSize)
 			.accumulator(values => mean(values));
 
